@@ -2,8 +2,12 @@
 
 ' Replaces BeginDialog, which is normally provided by BlueZone Script Host. Simply adds appropriate text to the DlgLast variable.
 function BeginDialog(dlgID_var, dlgPosX_num, dlgPosY_num, dlgWidth_num, dlgHeight_num, dlgTitle_text)
+
+    ' Assigns an initial value to this variable
+    global_dlgcontrolIDs = 1
+
     ' Assigns a numeric value to the dlgID_var
-    last_dlgID = "dlg_" & global_dlgcontrolIDs
+    last_dlgID = "dlg_" & global_dlgIDs
     dlgID_var = last_dlgID
 
     ' Resizing (because BZSH renders dialogs larger than the straight pixel amount)
@@ -17,7 +21,7 @@ function BeginDialog(dlgID_var, dlgPosX_num, dlgPosY_num, dlgWidth_num, dlgHeigh
               dlgTitle_text
 
 
-    global_dlgcontrolIDs = global_dlgcontrolIDs + 1
+    global_dlgIDs = global_dlgIDs + 1
 end function
 
 ' This is just a dummy script function to allow the script files themselves to exist as-is without issue.
@@ -92,9 +96,9 @@ end function
 '   from Hydra, which assigns variables, similar to how BlueZone Script Host did it. But this time, it works on Windows 10.
 function Dialog(dialog_to_display)
 
-    stdout_return = execute_cmd_with_stdout("D:\hydra\dist\hydravbdlg\hydravbdlg.exe """ & DlgDictionary.item(dialog_to_display)) & """"
-    MsgBox stdout_return
-    wscript.echo stdout_return  ' TODO: comment this out when not in use for testing
+    stdout_return = execute_cmd_with_stdout("hydravb.exe """ & DlgDictionary.item(dialog_to_display)) & """"
+
+    wscript.echo stdout_return
 
     ' stdout_return contains some lines of executable VBScript, returned from hydravbdlg.py. Those lines are prefixed "RETURN-->" and contain our variables.
     output_array = split(stdout_return, vbNewLine)
@@ -349,6 +353,13 @@ function PushButton(posX_num, posY_num, width_num, height_num, title_text, varia
     posX_num = round(posX_num * resize_factor)
     posY_num = round(posY_num * resize_factor)
 
+    ' if variable = "" then
+    '     variable_to_pass_to_button = global_dlgcontrolIDs
+    ' else
+    '     variable_to_pass_to_button = """" & variable & """"
+    ' end if
+    ' MsgBox variable_to_pass_to_button
+
     ' Creating a new string which contains dialog details, adding contents to the variable
     DlgLast = DlgLast + "|~|" & _
               "Button|" & _
@@ -429,6 +440,7 @@ DlgLast = "no dialog declared"                              ' A string which wil
 Set DlgDictionary = CreateObject("Scripting.Dictionary")    ' A dialog dictionary
 resize_factor = 1.6                                         ' The default sizes are about 1.55 times the declared sizes in BZSH.exe... this compensates.
 variable_array = array()	                                ' A blank array which various functions will use to contain a list of variables
-global_dlgcontrolIDs = 0                                    ' Creates a variable for dlgIDs... this can be used by the dictionary to load the correct dialog
+global_dlgcontrolIDs = 0                                    ' Creates a variable for dlgIDs... this can be used by the dictionary to load the correct control
+global_dlgIDs = 0                                           ' Creates a variable for dlgIDs... this can be used by the dictionary to load the correct dialog
 last_dlgID = 0                                              ' Each dialog gets it's own ID, the first one should be 0
 Set bz = CreateObject( "BZWhll.WhllObj" )                   ' An object for BZWhll.WhllObj, provided by Rocket in BZWhll.dll
