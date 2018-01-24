@@ -5,28 +5,13 @@ import sys
 global dlg_argument_to_parse
 
 
-# If there's no dialog passed to this utility, use a standard dialog for debugging/testing. TODO: add some semantic help in case this is accidentally invoked.
+# If there's no dialog passed to this utility, use a standard dialog for debugging/testing.
 if len(sys.argv) == 1:
-    dlg_argument_to_parse = ("BeginDialog|530|256|Biggest dialog|~|"
-                             "Button|352|224|80|24|OK|-1|~|"
-                             "Button|440|224|80|24|Cancel|0|~|"
-                             "Button|368|32|72|24|Button 1|1|~|"
-                             "Button|368|56|72|24|Button 2|2|~|"
-                             "Button|440|32|72|24|Button 3|3|~|"
-                             "Button|440|56|72|24|Button 4|4|~|"
-                             "Text|8|8|64|16|Short field:||~|"
-                             "EditBox|80|8|264|24|Autofilled|short_field|~|"
-                             "GroupBox|360|8|160|80|Buttons to hit||~|"
-                             "CheckBox|8|40|336|16|This is a long checkbox I wrote out.|check1|~|"
-                             "CheckBox|8|64|336|16|This is an even longer checkbox that I wrote out.|check2|~|"
-                             "GroupBox|360|96|160|120|Pick something:||~|"
-                             "Text|8|96|64|16|List it:||~|"
-                             "DropListBox|80|96|264|24|Here's a thing+chr(9)+And another+chr(9)+And another|droplist1|~|"
-                             "Text|8|128|64|16|Combo it:||~|"
-                             "ComboBox|80|128|264|24|Here's a thing+chr(9)+And another+chr(9)+And another|combobox1|~|"
-                             "Text|8|160|336|64|Notice that this is a very long text area which can be filled in with any number of words. It is designed to"
-                             " go for a long long time. Notice that this is a very long text area which can be filled in with any number of words. It is"
-                             " designed to go for a long long time.|")
+    dlg_argument_to_parse = ("BeginDialog|320|110|HydraVB Dialog Generator|~|"
+                             "Button|120|80|80|24|OK|-1|~|"
+                             "Text|10|10|300|70|HydraVB.exe is a dialog generator written by Veronica Cary for DHS' BlueZone Scripts Program"
+                             " to overcome limitations in VBScript's dialog rendering. It is written in Python, source code is available at"
+                             " https://github.com/MN-Script-Team/hydra. |")
 else:
     dlg_argument_to_parse = sys.argv[1]
     print(dlg_argument_to_parse)
@@ -136,9 +121,8 @@ class HydraVBDialog(wx.Frame):
     def onButton(self, event):
         """Fire when its corresponding button is pressed."""
         button = event.GetEventObject()
-        # print("Label: " + button.GetLabel())
 
-        print("RETURN-->ButtonPressed = " + button.GetName())
+        print('RETURN-->ButtonPressed = ' + button.GetName())
 
         # Goes through each editbox-style control and prints a return string to be iterated through VBScript (via stdout)
         for control in returncontrols:
