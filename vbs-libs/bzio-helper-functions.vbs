@@ -197,7 +197,6 @@ function EMWaitReady(TimeoutVal, ExtraWaitVal)
 	bz.WaitReady TimeoutVal, ExtraWaitVal
 end function
 
-
 ' Pastes the specified text into the host screen.
 function EMWriteScreen(WriteStr, RowVal, ColumnVal)
 	bz.WriteScreen WriteStr, RowVal, ColumnVal
@@ -353,13 +352,6 @@ function PushButton(posX_num, posY_num, width_num, height_num, title_text, varia
     posX_num = round(posX_num * resize_factor)
     posY_num = round(posY_num * resize_factor)
 
-    ' if variable = "" then
-    '     variable_to_pass_to_button = global_dlgcontrolIDs
-    ' else
-    '     variable_to_pass_to_button = """" & variable & """"
-    ' end if
-    ' MsgBox variable_to_pass_to_button
-
     ' Creating a new string which contains dialog details, adding contents to the variable
     DlgLast = DlgLast + "|~|" & _
               "Button|" & _
@@ -432,10 +424,7 @@ class Script_Line
 	end function
 end class
 
-
 ' ----------------------------------------------------------------------------------------------------- VARIABLES WE NEED
-
-
 DlgLast = "no dialog declared"                              ' A string which will contain the last known dialog contents
 Set DlgDictionary = CreateObject("Scripting.Dictionary")    ' A dialog dictionary
 resize_factor = 1.6                                         ' The default sizes are about 1.55 times the declared sizes in BZSH.exe... this compensates.
