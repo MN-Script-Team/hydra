@@ -348,5 +348,10 @@ frame = MAXISCustom(None, "NEW THING", [["StaticText", "ENTER A CASE NUMBER:"],
 # wx.Choice     [type, list_of_choices, output_variable, mandatory, err_msg, row, col, row_span, col_span]
 # wx.TextCtrl   [type, output_variable, starting_value, mandatory, err_msg, row, col, row_span, col_span]
 # wx.CheckBox   [type, text, output_variable, row, col, row_span, col_span]
-frame.Show()
-app.MainLoop()
+if __name__ == "__main__":
+    # app = wx.App()
+    frame.Show()
+    app.MainLoop()
+
+print("MAXIS_case_number: " + MAXIS_case_number)
+print("edit_case_number: " + edit_case_number   )
