@@ -341,6 +341,7 @@ class MAXISCustom (wx.Frame):
                     self.x.SetMaxSize(wx.Size(width, 17))
                 gbSizer1.Add(self.x, wx.GBPosition(row, col), wx.GBSpan(row_span, col_span), wx.ALL, 5)
 
+                elements.append(x)
 
             x = int(x)
             x += 1
@@ -358,6 +359,8 @@ class MAXISCustom (wx.Frame):
 
             self.cancel_button = wx.Button(self, wx.ID_CANCEL)
             gbSizer1.Add(self.cancel_button, wx.GBPosition(row, 5), wx.GBSpan(1, 1), wx.ALL, 5)
+
+            self.cancel_button.Bind(wx.EVT_BUTTON, self.cancel_confirmation)
         else:
             if continue_text is "OK":
                 self.continue_button = wx.Button(self, wx.ID_OK)
@@ -366,19 +369,46 @@ class MAXISCustom (wx.Frame):
                 self.continue_button = wx.Button(self, wx.ID_ANY, continue_text)
                 gbSizer1.Add(self.continue_button, wx.GBPosition(row, 5), wx.GBSpan(1, 1), wx.ALL, 5)
 
-
         self.SetSizer(gbSizer1)
         self.Layout()
         gbSizer1.Fit(self)
 
         self.Centre(wx.BOTH)
 
-        for elements in all_elements:
-            pass    # here be bindings
+        self.continue_button.Bind(wx.EVT_BUTTON, self.click_OK(all_elements))
 
     def __del__(self):
         pass
 
+    def cancel_confirmation(self):
+        dial = wx.MessageDialog(None, 'Are you sure to quit?', 'Question', wx.YES_NO | wx.NO_DEFAULT | wx.ICON_QUESTION)
+
+        ret = dial.ShowModal()
+
+        if ret == wx.ID_YES:
+        	self.Destroy()
+        	quit()
+
+    def click_OK(self, all_elements):
+        for elements in all_elements:
+            if elements[0] is "StaticText":
+                pass
+            if elements[0] is "ComboBox":
+                if len(elements) > 5:
+                    if elements[4]:
+                        pass # do the mandatory thing here
+            if elements[0] is "Choice":
+                if len(elements) > 4:
+                    if elements[3]:
+                        pass # do the mandatory thing here
+            if elements[0] is "TextCtrl":
+                if len(elements) > 4:
+                    if elements[3]:
+                        pass # do the mandatory thing here
+            if elements[0] is "CheckBox":
+                pass
+            if elements[0] is "Button":
+                pass
 
 app = wx.App()
 
