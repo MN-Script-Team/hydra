@@ -3,7 +3,7 @@ import math
 
 
 class MAXISCustom (wx.Frame):
-    def __init__(self, parent, title, all_elements):
+    def __init__(self, parent, title, all_elements, continue_text, cancel_yn):
         wx.Frame.__init__(self, parent, id=wx.ID_OPEN, title=title, pos=wx.DefaultPosition, size=wx.Size(-1, -1),
                   style=wx.DEFAULT_FRAME_STYLE | wx.TAB_TRAVERSAL | wx.STAY_ON_TOP)
 
@@ -308,8 +308,66 @@ class MAXISCustom (wx.Frame):
 
                 # chbl_count += 1
                 elements.append(x)
+
+            if elements[0] is "Button":
+                label = elements[1]
+
+                if len(elements) >= 6:
+                    row = elements[4]
+                    col = elements[5]
+                else:
+                    row = deflt_row
+                    col = deflt_col
+
+                if len(elements) >= 8:
+                    row_span = elements[6]
+                    col_span = elements[7]
+                else:
+                    row_span = 1
+                    col_span = int(math.ceil(len(label) / 15))
+
+
+                deflt_col = col + col_span
+                if row_span > 1:
+                    deflt_row = row + row_span
+                if deflt_col >= 6:
+                    deflt_col = 0
+                    deflt_row += 1
+
+                self.x = wx.Button(self, wx.ID_ANY, label, wx.DefaultPosition, wx.DefaultSize, 0)
+
+                if elements[3] is True:
+                    width = 7 * len(label)
+                    self.x.SetMaxSize(wx.Size(width, 17))
+                gbSizer1.Add(self.x, wx.GBPosition(row, col), wx.GBSpan(row_span, col_span), wx.ALL, 5)
+
+                elements.append(x)
+
             x = int(x)
             x += 1
+
+        continue_text = continue_text.upper()
+        row = deflt_row + 1
+
+        if  cancel_yn:
+            if continue_text is "OK":
+                self.continue_button = wx.Button(self, wx.ID_OK)
+                gbSizer1.Add(self.continue_button, wx.GBPosition(row, 4), wx.GBSpan(1, 1), wx.ALL, 5)
+            else:
+                self.continue_button = wx.Button(self, wx.ID_ANY, continue_text)
+                gbSizer1.Add(self.continue_button, wx.GBPosition(row, 4), wx.GBSpan(1, 1), wx.ALL, 5)
+
+            self.cancel_button = wx.Button(self, wx.ID_CANCEL)
+            gbSizer1.Add(self.cancel_button, wx.GBPosition(row, 5), wx.GBSpan(1, 1), wx.ALL, 5)
+
+            self.cancel_button.Bind(wx.EVT_BUTTON, self.cancel_confirmation)
+        else:
+            if continue_text is "OK":
+                self.continue_button = wx.Button(self, wx.ID_OK)
+                gbSizer1.Add(self.continue_button, wx.GBPosition(row, 5), wx.GBSpan(1, 1), wx.ALL, 5)
+            else:
+                self.continue_button = wx.Button(self, wx.ID_ANY, continue_text)
+                gbSizer1.Add(self.continue_button, wx.GBPosition(row, 5), wx.GBSpan(1, 1), wx.ALL, 5)
 
         self.SetSizer(gbSizer1)
         self.Layout()
@@ -317,12 +375,40 @@ class MAXISCustom (wx.Frame):
 
         self.Centre(wx.BOTH)
 
-        for elements in all_elements:
-            pass    # here be bindings
+        self.continue_button.Bind(wx.EVT_BUTTON, self.click_OK(all_elements))
 
     def __del__(self):
         pass
 
+    def cancel_confirmation(self):
+        dial = wx.MessageDialog(None, 'Are you sure to quit?', 'Question', wx.YES_NO | wx.NO_DEFAULT | wx.ICON_QUESTION)
+
+        ret = dial.ShowModal()
+
+        if ret == wx.ID_YES:
+        	self.Destroy()
+        	quit()
+
+    def click_OK(self, all_elements):
+        for elements in all_elements:
+            if elements[0] is "StaticText":
+                pass
+            if elements[0] is "ComboBox":
+                if len(elements) > 5:
+                    if elements[4]:
+                        pass # do the mandatory thing here
+            if elements[0] is "Choice":
+                if len(elements) > 4:
+                    if elements[3]:
+                        pass # do the mandatory thing here
+            if elements[0] is "TextCtrl":
+                if len(elements) > 4:
+                    if elements[3]:
+                        pass # do the mandatory thing here
+            if elements[0] is "CheckBox":
+                pass
+            if elements[0] is "Button":
+                pass
 
 app = wx.App()
 
@@ -340,7 +426,10 @@ frame = MAXISCustom(None, "NEW THING", [["StaticText", "ENTER A CASE NUMBER:"],
                                         ["CheckBox", "Check me for a reall awesome, fantastic cool thing", cool_checkbox],
                                         ["StaticText", "Did it work           "],
                                         ["StaticText", "Pickone of these - no other choices:"],
-                                        ["Choice", ["Small", "Medium", "Large"], best_choice]])
+                                        ["Choice", ["Small", "Medium", "Large"], best_choice],
+                                        ["Button", "Cool Button", "Nav", True, 8, 5],
+                                        ["Button", "This button will send the case through background", "bkrnd", True]],
+                    "Continue...", False)
 
 
 # wx.StaticText [type, text, row, col, row_span, col_span]
@@ -348,10 +437,6 @@ frame = MAXISCustom(None, "NEW THING", [["StaticText", "ENTER A CASE NUMBER:"],
 # wx.Choice     [type, list_of_choices, output_variable, mandatory, err_msg, row, col, row_span, col_span]
 # wx.TextCtrl   [type, output_variable, starting_value, mandatory, err_msg, row, col, row_span, col_span]
 # wx.CheckBox   [type, text, output_variable, row, col, row_span, col_span]
-if __name__ == "__main__":
-    # app = wx.App()
-    frame.Show()
-    app.MainLoop()
-
-print("MAXIS_case_number: " + MAXIS_case_number)
-print("edit_case_number: " + edit_case_number   )
+# wx.Button     [type, label, action, constrict_size, row, col, row_span, col_span]
+frame.Show()
+app.MainLoop()
